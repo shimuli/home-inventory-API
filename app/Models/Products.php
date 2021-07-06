@@ -9,12 +9,23 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class Products extends Model
 {
     const AVAILABLE_PRODUCT = 'available';
-const UNAVAILABLE_PRODUCT = 'unavailable';
+    const UNAVAILABLE_PRODUCT = 'unavailable';
 
     use HasFactory, SoftDeletes;
 
-     // if product is available or not
-    public function isAvailable(){
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
+
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
+
+    // if product is available or not
+    public function isAvailable()
+    {
         return $this->status == Products::AVAILABLE_PRODUCT;
     }
 }

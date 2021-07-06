@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -13,6 +14,19 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        // \App\Models\User::factory(10)->create();
+
+        // disable events
+        User::flushEventListeners();
+
+        // if ($this->command->confirm('Hello Developer, Do you want refresh the database?', true)) {
+        //     $this->command->call('migrate:refresh');
+        //     $this->command->info('Awesome! Database was refreshed');
+        // }
+        $this->call([
+            UserSeeder::class,
+            CategorySeeder::class,
+            ProductsSeeder::class,
+        ]);
+
     }
 }

@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Passport\HasApiTokens;
+use Illuminate\Support\Str;
+
 
 
 class User extends Authenticatable
@@ -21,6 +23,9 @@ class User extends Authenticatable
     // protected $table = 'users';
     use HasFactory, Notifiable, SoftDeletes, HasApiTokens;
 
+     public function products(){
+        return $this->hasMany(products::class);
+    }
     /**
      * The attributes that are mass assignable.
      *
@@ -44,6 +49,8 @@ class User extends Authenticatable
     protected $hidden = [
         'password',
         'remember_token',
+        'verification_token',
+        'deleted_at'
     ];
 
     /**
@@ -55,11 +62,28 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
     ];
 
+    public function setNAmeAttribute($name){
+        $this->attributes['name'] = $name;
+    }
+
+     public function getNAmeAttribute($name){
+        return ucwords($name);
+    }
+
+     public function setEmailAttribute($email){
+        $this->attributes['email'] = strtolower($email) ;
+    }
+
      public function isVerified(){
         return $this->verified ==User::VERIFIED_USER;
     }
 
     public function isAdmin(){
         return $this->admin ==User::ADMIN_USER;
+    }
+
+    public static function generateVerificationCode(){
+        //return Str::random(40);
+        return Str::random(40);
     }
 }

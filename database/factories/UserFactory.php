@@ -25,10 +25,15 @@ class UserFactory extends Factory
         return [
             'name' => $this->faker->name(),
             'email' => $this->faker->unique()->safeEmail(),
+            'phone' => $this->faker->phoneNumber(),
             'email_verified_at' => now(),
+            'verified' => $verified = $this->faker->randomElement([User::VERIFIED_USER, User::UNVERIFIED_USER]),
+            'verification_token'=> $verified == User::VERIFIED_USER ? null : User::generateVerificationCode(),
+            'admin' => $this->faker->randomElement([User::ADMIN_USER, User::REGULAR_USER]),
             'password' => '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // password
             'remember_token' => Str::random(10),
         ];
+
     }
 
     /**
