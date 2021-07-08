@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\Category;
 use App\Models\Products;
 use Illuminate\Database\Seeder;
 
@@ -16,8 +17,8 @@ class ProductsSeeder extends Seeder
     {
         Products::factory()->times(600)->create()->each(
             function ($product) {
-                // $categories = Categories::all()->random(random_int(1, 20))->pluck('id');
-                // $product->categories()->attach($categories);
+                $categories = Category::all()->random(random_int(1, 10))->pluck('id');
+                $product->category()->attach($categories);
                 $product->save();
             }
         );

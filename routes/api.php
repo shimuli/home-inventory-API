@@ -2,7 +2,10 @@
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\Products\ProductsController;
+use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\User\UserController;
+use App\Http\Controllers\UserProductsController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -33,15 +36,23 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
 
     // user routes
     Route:: resource('user', UserController::class);
+    Route::resource('profile', ProfileController::class);
     Route::post('oauth/token', 'Laravel\Passport\Http\Controllers\AccessTokenController@issueToken');
     Route::post('login', [LoginController::class, 'login']);
 
     Route::post('logout', [LoginController::class, 'logout']);
 
     // categories
-
-
     Route::resource('category', CategoryController::class);
+
+    //products
+
+    Route::resource('products', ProductsController::class)->only(['index',  'store']);
+
+    Route::resource('user.category.products', UserProductsController::class);
+
+;
+
 
 
 });

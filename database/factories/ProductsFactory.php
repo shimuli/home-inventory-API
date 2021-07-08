@@ -31,7 +31,6 @@ class ProductsFactory extends Factory
             'current_price' => $this->faker->numberBetween(10, 5000),
             'status' => $this->faker->randomElement([Products::AVAILABLE_PRODUCT, Products::UNAVAILABLE_PRODUCT]),
             //'image' => $this->faker->randomElement(['1.png', '2.png', '3.png']),
-            'category_id' => Category::all()->random()->id,
             'user_id' => User::all()->random()->id,
         ];
 

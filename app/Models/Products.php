@@ -13,6 +13,18 @@ class Products extends Model
 
     use HasFactory, SoftDeletes;
 
+    protected $fillable = [
+        'user_id',
+        'category_id',
+        'name',
+        'brand',
+        'quantity',
+        'approx_price',
+        'current_price',
+        'status',
+    ];
+
+
     public function user()
     {
         return $this->belongsTo(User::class);
@@ -20,7 +32,7 @@ class Products extends Model
 
     public function category()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsToMany(Category::class);
     }
 
     // if product is available or not

@@ -40,9 +40,9 @@ class CreateUsersTable extends Migration
     {
         Schema::dropIfExists('users');
 
-        Schema::table('users', function (Blueprint $table) {
-            $table->dropSoftDeletes();
-        });
+        // Schema::table('users', function (Blueprint $table) {
+        //     $table->dropSoftDeletes();
+        // });
 
     }
 }

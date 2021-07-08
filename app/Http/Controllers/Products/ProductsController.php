@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Products;
 
 use App\Http\Controllers\ApiController;
-use App\Http\Controllers\Controller;
 use App\Models\Products;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class ProductsController extends ApiController
 {
@@ -16,7 +17,10 @@ class ProductsController extends ApiController
      */
     public function index()
     {
-        //
+        $products = Products::all();
+
+        return $this->returnAll($products);
+
     }
 
     /**
@@ -35,9 +39,30 @@ class ProductsController extends ApiController
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(Request $request, User $user)
     {
-        //
+        $rules = [
+            'category_id' => 'required|integer|min:1',
+            'name' => 'required',
+            'brand' => 'required',
+            'quantity' => 'required|integer|min:1',
+            'approx_price' => 'required|integer|min:50',
+            'current_price' => 'required|integer|min:50',
+        ];
+
+        // dd($data['user_id'] = auth('api')->user()->id);
+
+        $this->validate($request, $rules);
+
+        $data = $request->all();
+        $data['status'] = Products::UNAVAILABLE_PRODUCT;
+        //$data['image'] = $request->image->store(''); // add path and name if needed
+        $data['user_id'] = auth('api')->user()->id;
+
+        $product = Products::create($data);
+
+        return $this->returnOne($product, 201);
+
     }
 
     /**
@@ -69,9 +94,10 @@ class ProductsController extends ApiController
      * @param  \App\Models\Products  $products
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Products $products)
+    public function update(Request $request, Products $products, User $user)
     {
-        //
+       
+
     }
 
     /**
@@ -83,5 +109,15 @@ class ProductsController extends ApiController
     public function destroy(Products $products)
     {
         //
+    }
+
+    protected function checkSeller(User $user, Products $product)
+    {
+        // $data['user_id'] = auth('api')->user()->id;
+
+        if (auth('api')->user()->id != $product->user_id) {
+            dd(auth('api')->user()->id);
+            throw new HttpException(422, "You are not authorize to perform this action on this specific product");
+        }
     }
 }
