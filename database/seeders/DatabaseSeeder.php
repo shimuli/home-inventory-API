@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Category;
+use App\Models\Products;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -17,6 +19,8 @@ class DatabaseSeeder extends Seeder
 
         // disable events
         User::flushEventListeners();
+        Products::flushEventListeners();
+        Category::flushEventListeners();
 
         // if ($this->command->confirm('Hello Developer, Do you want refresh the database?', true)) {
         //     $this->command->call('migrate:refresh');

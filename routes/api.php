@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\OneUserProducts;
 use App\Http\Controllers\Products\ProductsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\User\UserController;
@@ -36,10 +37,12 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
 
     // user routes
     Route:: resource('user', UserController::class);
+    Route::name('verify')->get('user/verify/{token}', [UserController::class, 'verify']);
+    Route::name('resend')->get('user/{user}/resend', [UserController::class, 'resend']);
+
     Route::resource('profile', ProfileController::class);
     Route::post('oauth/token', 'Laravel\Passport\Http\Controllers\AccessTokenController@issueToken');
     Route::post('login', [LoginController::class, 'login']);
-
     Route::post('logout', [LoginController::class, 'logout']);
 
     // categories
@@ -48,8 +51,9 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
     //products
 
     Route::resource('products', ProductsController::class)->only(['index',  'store']);
+    //Route::resource('userProducts', OneUserProducts::class);
 
-    Route::resource('user.category.products', UserProductsController::class);
+    Route::resource('user.products', UserProductsController::class);
 
 ;
 

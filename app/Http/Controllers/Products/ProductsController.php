@@ -42,7 +42,6 @@ class ProductsController extends ApiController
     public function store(Request $request, User $user)
     {
         $rules = [
-            'category_id' => 'required|integer|min:1',
             'name' => 'required',
             'brand' => 'required',
             'quantity' => 'required|integer|min:1',
@@ -55,7 +54,7 @@ class ProductsController extends ApiController
         $this->validate($request, $rules);
 
         $data = $request->all();
-        $data['status'] = Products::UNAVAILABLE_PRODUCT;
+        $data['status'] = Products::AVAILABLE_PRODUCT;
         //$data['image'] = $request->image->store(''); // add path and name if needed
         $data['user_id'] = auth('api')->user()->id;
 
@@ -96,7 +95,6 @@ class ProductsController extends ApiController
      */
     public function update(Request $request, Products $products, User $user)
     {
-       
 
     }
 
@@ -108,7 +106,8 @@ class ProductsController extends ApiController
      */
     public function destroy(Products $products)
     {
-        //
+        
+
     }
 
     protected function checkSeller(User $user, Products $product)

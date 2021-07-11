@@ -73,10 +73,10 @@ class UserProductsController extends ApiController
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, User $user, Category $category, Products $products)
+    public function update(Request $request, User $user, Products $product)
     {
         $rules = [
-            'quantity' => 'integer|min:1',
+            'quantity' => 'integer',
             'approx_price' => 'integer|min:50',
             'current_price' => 'integer|min:50',
             'status' => 'in:' . Products::AVAILABLE_PRODUCT . ',' . Products::UNAVAILABLE_PRODUCT,
@@ -84,38 +84,47 @@ class UserProductsController extends ApiController
 
         $this->validate($request, $rules);
 
-// $data = $request->all();
+        $product->user_id = auth('api')->user()->id;
 
-// $data['user_id'] = auth('api')->user()->id;
-        $products->user_id = auth('api')->user()->id;
-        $products->category_id = $request->category_id;
+        // check who is updating
+        $this->checkUser($user, $product);
 
-// check who is updating
-        $this->checkSeller($user, $products);
+        // $product->fill($request->only([
+        //     'name',
+        //     'brand',
+        //     'approx_price',
+        //     'current_price',
 
-        $products->fill($request->only([
-            'name',
-            'brand',
-            'approx_price',
-            'current_price',
-            'quantity',
-        ]));
+        // ]));
+
+        // if ($product->quantity < $request->quantity) {
+        //     return $this->errorResponse('This product does not have enough quantity to be sold', 409);
+        // }
 
         if ($request->has('status')) {
-            $products->status = $request->status;
+            $product->status = $request->status;
 
-            if ($products->isAvailable() && $products->category()->count() == 0) {
+            if ($product->isAvailable() && $product->category()->count() == 0) {
                 return $this->errorResponse("Status update failed, the product must be in a category", 409);
             }
         }
 
-        if ($products->isClean()) {
+        if ($request->has('quantity')) {
+            if($request->quantity < 0 && $product->quantity <=0 ){
+                return $this->errorResponse('This product quantity is 0 already', 409);
+            }
+            $product->quantity += $request->quantity;
+            // $product->save();
+
+        }
+
+        if ($product->isClean()) {
             return $this->errorResponse('Select a product feature to update', 422);
         }
 
-        $products->save();
+        $product->save();
 
-        return $this->returnOne($products, 201);
+        return $this->returnOne($product, 201);
 
     }
 
@@ -125,17 +134,27 @@ class UserProductsController extends ApiController
      * @param  \App\Models\User  $user
      * @return \Illuminate\Http\Response
      */
-    public function destroy(User $user)
+    public function destroy(User $user, Products $product)
     {
-        //
+        $product->user_id = auth('api')->user()->id;
+        $this->checkUser($user, $product);
+
+        $product->delete();
+
+        //  // delete image
+        // Storage::delete($product->image);
+
+        return response()->json([
+            "message" => 'Deleted Successfully', 'code' => '204',
+        ], 200);
+
     }
 
-    protected function checkSeller(User $user, Products $product)
+    protected function checkUser(User $user, Products $product)
     {
         // $data['user_id'] = auth('api')->user()->id;
-
-        if (auth('api')->user()->id != $product->user_id) {
-            dd(auth('api')->user()->id);
+        if ($user->id != $product->user_id) {
+            (auth('api')->user()->id);
             throw new HttpException(422, "You are not authorize to perform this action on this specific product");
         }
     }

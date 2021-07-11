@@ -3,15 +3,17 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\ApiController;
+use App\Mail\UserCreated;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 
 class UserController extends ApiController
 {
-     public function __construct()
+    public function __construct()
     {
         //$this->middleware('auth:api')->except(['store']);
-        $this->middleware('auth:api')->except(['store']);
+        $this->middleware('auth:api')->except(['store', 'verify', 'resend']);
 
     }
     /**
@@ -107,6 +109,8 @@ class UserController extends ApiController
         if ($request->has('name')) {
             $user->name = $request->name;
         }
+
+        // confirm email if updated
         if ($request->has('email') && $user->email != $request->email) {
             $user->verified = User::UNVERIFIED_USER;
             $user->verification_token = User::generateVerificationCode();
@@ -147,4 +151,33 @@ class UserController extends ApiController
         ], 200);
 
     }
+
+    public function verify($token)
+    {
+        $user = User::where('verification_token', $token)->firstOrFail();
+        $user->verified = User::VERIFIED_USER;
+        $user->verification_token = 1;
+
+        $user->save();
+
+        return $this->showMessage("The account has been verified");
+    }
+
+    // resend verification email
+    public function resend(User $user)
+    {
+        if ($user->isVerified()) {
+            return $this->errorResponse("This user is already verified", 409);
+        }
+
+        // retry after every 10 seconds five times before failing
+        retry(5, function () use ($user) {
+            //sed email method use in production
+            Mail::to($user)->send(new UserCreated($user));
+        }, 100);
+
+        return $this->showMessage('The verification email was resend');
+        
+    }
+
 }

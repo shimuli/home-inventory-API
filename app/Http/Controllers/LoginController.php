@@ -19,7 +19,14 @@ class LoginController extends Controller
 
         $this->validate($request, $rules);
 
+
         $user = User::where('email', $request->email)->first();
+
+        // check if user is verified before log in
+       if(!$user->isVerified()){
+           return response()->json(['unverified' => 'Please verify your account first'], 401);
+       }
+
         if (!$user || !Hash::check($request->password, $user->password)) {
 
             return response()->json(['Invalid' => 'Password or email is incorrect'], 401);

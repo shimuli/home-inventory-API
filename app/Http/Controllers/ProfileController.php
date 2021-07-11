@@ -67,7 +67,7 @@ class ProfileController extends ApiController
 
     }
 
-   
+
 
     /**
      * Show the form for editing the specified resource.
@@ -119,7 +119,7 @@ class ProfileController extends ApiController
             $user->admin = $request->admin;
         }
 
-        if (!$user->isDirty()) {
+        if ($user->isClean()) {
             return $this->errorResponse('You need to specify a different value to update', 422);
         }
         $user->save();
