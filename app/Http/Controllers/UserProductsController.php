@@ -89,17 +89,14 @@ class UserProductsController extends ApiController
         // check who is updating
         $this->checkUser($user, $product);
 
-        // $product->fill($request->only([
-        //     'name',
-        //     'brand',
-        //     'approx_price',
-        //     'current_price',
+        $product->fill($request->only([
+            'name',
+            'brand',
+            'approx_price',
+            'current_price',
 
-        // ]));
+        ]));
 
-        // if ($product->quantity < $request->quantity) {
-        //     return $this->errorResponse('This product does not have enough quantity to be sold', 409);
-        // }
 
         if ($request->has('status')) {
             $product->status = $request->status;

@@ -52,4 +52,18 @@ class UserTransformer extends TransformerAbstract
         // "created_at": "2021-07-08T18:22:24.000000Z",
         // "updated_at": "2021-07-08T18:22:24.000000Z"
     }
+
+    public static function originalData($index){
+        $attributes=[
+            'userId'=> 'id',
+            'userName'=> 'name',
+            'userPhone'=>'phone',
+            'isVerified'=>'verified',
+            'isAdmin'=>'admin',
+            'creationDate'=>'created_at',
+            'updatedDate'=>'updated_at',
+        ];
+        return isset($attributes[$index]) ? $attributes[$index] : null;
+
+    }
 }

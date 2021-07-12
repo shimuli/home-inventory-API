@@ -40,6 +40,7 @@ class ProductsTransformer extends TransformerAbstract
             'productQuantity'=>(int)$products->quantity,
             'previousPrice'=> (string)$products->approx_price,
             'newPrice'=> (string)$products->current_price,
+            'priceDifference'=>(double)$products->current_price - (double)$products->approx_price,
             'productStatus'=> (string)$products->status,
             'createdDate'=> (string)$products->created_at,
             'updatedDate'=> (string)$products->updated_at,
@@ -57,5 +58,23 @@ class ProductsTransformer extends TransformerAbstract
         // "created_at": "2021-07-08T18:22:25.000000Z",
         // "updated_at": "2021-07-08T18:22:25.000000Z",
         // "deleted_at": null
+    }
+
+
+      public static function originalData($index){
+        $attributes=[
+            'productId'=>'id',
+            'userId'=>'user_id',
+            'productName'=> 'name',
+            'brandName'=> 'brand',
+            'productQuantity'=>'quantity',
+            'previousPrice'=> 'approx_price',
+            'newPrice'=> 'current_price',
+            'productStatus'=> 'status',
+            'createdDate'=> 'created_at',
+            'updatedDate'=> 'updated_at',
+        ];
+
+        return isset($attributes[$index]) ? $attributes[$index] : null;
     }
 }
