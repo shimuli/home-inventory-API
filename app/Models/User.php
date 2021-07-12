@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Transformers\UserTransformer;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -18,6 +19,8 @@ class User extends Authenticatable
 
     const ADMIN_USER ='true';
     const REGULAR_USER = 'false';
+
+    public $transformer = UserTransformer::class;
 
     // public $transformer = UserTransformer::class;
     // protected $table = 'users';
@@ -39,6 +42,7 @@ class User extends Authenticatable
         'verified',
         'verification_token',
         'admin',
+
     ];
 
     /**
@@ -50,7 +54,9 @@ class User extends Authenticatable
         'password',
         'remember_token',
         'verification_token',
-        'deleted_at'
+        'deleted_at',
+        'email_verified_at',
+        'headers'
     ];
 
     /**

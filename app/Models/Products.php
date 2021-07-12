@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Transformers\ProductsTransformer;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -10,6 +11,7 @@ class Products extends Model
 {
     const AVAILABLE_PRODUCT = 'available';
     const UNAVAILABLE_PRODUCT = 'unavailable';
+    public $transformer = ProductsTransformer::class;
 
     use HasFactory, SoftDeletes;
 
@@ -22,6 +24,10 @@ class Products extends Model
         'approx_price',
         'current_price',
         'status',
+    ];
+
+    protected $hidden =[
+        'deleted_at',
     ];
 
 
