@@ -106,7 +106,7 @@ class ProductsController extends ApiController
      */
     public function destroy(Products $products)
     {
-        
+
 
     }
 

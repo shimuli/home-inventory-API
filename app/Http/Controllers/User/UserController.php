@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\User;
 
+use AfricasTalking\SDK\AfricasTalking;
 use App\Http\Controllers\ApiController;
 use App\Mail\UserCreated;
 use App\Models\User;
@@ -12,15 +13,15 @@ use Illuminate\Support\Facades\Mail;
 
 class UserController extends ApiController
 {
+
     public function __construct()
     {
         //$this->middleware('auth:api')->except(['store']);
         $this->middleware('auth:api')->except(['store', 'verify', 'resend']);
 
         $this->middleware('transform.input:' . UserTransformer::class)->only(['store', 'update']);
-
-
     }
+
     /**
      * Display a listing of the resource.
      *
@@ -65,8 +66,10 @@ class UserController extends ApiController
         $data['verification_token'] = User::generateVerificationCode();
         $data['admin'] = User::REGULAR_USER;
 
+        $data['verify_code'] = User::generateCheckCode();
         $users = User::create($data);
 
+        //$this->sendSMS($users); // used to verify phone number
         return $this->returnOne($users, 201);
 
     }
@@ -185,8 +188,25 @@ class UserController extends ApiController
 
     }
 
+    public function sendSMS(User $user)
+    {
+        $username = env('SMS_ACCESS_KEY_ID'); // use 'sandbox' for development in the test environment
+        $apiKey = env('SMS_SECRET_ACCESS_KEY'); // use your sandbox app API key for development in the test environment
+        $AT = new AfricasTalking($username, $apiKey);
+        $sms = $AT->sms();
 
-    public function userProfile(){
+        retry(5, function () use ($user, $sms) {
+            $result = $sms->send([
+                'to' => $user->phone,
+                'message' => 'Shopping buddy: Hello ' . $user->name . ' verify your phone number using this code: ' . $user->verify_code,
+            ]);
+
+        });
+
+    }
+
+    public function userProfile()
+    {
 
         return Auth::user();
     }
