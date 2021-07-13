@@ -66,7 +66,7 @@ class UserController extends ApiController
         $data['verification_token'] = User::generateVerificationCode();
         $data['admin'] = User::REGULAR_USER;
 
-        $data['verify_code'] = User::generateCheckCode();
+        //$data['verify_code'] = User::generateCheckCode();
         $users = User::create($data);
 
         //$this->sendSMS($users); // used to verify phone number

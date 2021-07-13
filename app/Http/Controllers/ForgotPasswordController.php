@@ -34,11 +34,16 @@ class ForgotPasswordController extends Controller
             Mail::to($user)->send(new forgotPasswordMail($user));
         }, 100);
 
-       return response()->json(['verify_code' => $user->verify_code], 200);
+        return response()->json(['verify_code' => $user->verify_code], 200);
+    }
 
+    public function resend_code(User $user)
+    {
+        // retry after every 10 seconds five times before failing
+            //sed email method use in production
+            Mail::to($user)->send(new forgotPasswordMail($user));
 
-
-
+        return $this->showMessage('The verification code was resend');
 
     }
 }

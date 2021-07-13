@@ -42,6 +42,8 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
 
     Route::get('userProfile', [UserController::class, 'userProfile'])->middleware('auth:api');
     Route::name('code')->post('code', [ForgotPasswordController::class, 'code']);
+    Route::name('resend_code')->post('user/{user}/resend_code', [ForgotPasswordController::class, 'resend_code']);
+
     Route::name('reset_password')->post('reset_password', [ResetPasswordController::class, 'reset_password']);
 
 
