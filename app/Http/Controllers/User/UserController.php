@@ -161,7 +161,7 @@ class UserController extends ApiController
     {
         $user = User::where('verification_token', $token)->firstOrFail();
         $user->verified = User::VERIFIED_USER;
-        $user->verification_token = 1;
+        $user->verification_token = null;
 
         $user->save();
 

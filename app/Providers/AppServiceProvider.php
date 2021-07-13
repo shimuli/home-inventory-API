@@ -34,7 +34,11 @@ class AppServiceProvider extends ServiceProvider
 
         // send verification email
         User::created(function ($user) {
-            Mail::to($user)->send(new UserCreated($user));
+            retry(5, function () use ($user) {
+                Mail::to($user)->send(new UserCreated($user));
+
+            });
+
         });
 
         // User email change verification
@@ -55,8 +59,11 @@ class AppServiceProvider extends ServiceProvider
             }
         });
 
-        User::created(function ($user) {
-            Mail::to($user)->send(new forgotPasswordMail($user));
+        User::code(function ($user) {
+            retry(5, function () use ($user) {
+                Mail::to($user)->send(new forgotPasswordMail($user));
+            }, 100);
+
         });
 
     }
