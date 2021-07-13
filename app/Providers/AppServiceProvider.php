@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Mail\forgotPasswordMail;
 use App\Mail\UserCreated;
 use App\Mail\UserMailChanged;
 use App\Models\Products;
@@ -32,15 +33,15 @@ class AppServiceProvider extends ServiceProvider
         Schema::defaultStringLength(191);
 
         // send verification email
-        User::created(function($user){
+        User::created(function ($user) {
             Mail::to($user)->send(new UserCreated($user));
         });
 
         // User email change verification
-        User::updated(function($user){
+        User::updated(function ($user) {
             // retry five time after ten seconds
-            if($user->isDirty('email')){
-                retry(5, function() use ($user){
+            if ($user->isDirty('email')) {
+                retry(5, function () use ($user) {
                     Mail::to($user)->send(new UserMailChanged($user));
                 }, 100);
             }
@@ -52,6 +53,10 @@ class AppServiceProvider extends ServiceProvider
                 $products->status = Products::UNAVAILABLE_PRODUCT;
                 $products->save();
             }
+        });
+
+        User::created(function ($user) {
+            Mail::to($user)->send(new forgotPasswordMail($user));
         });
 
     }

@@ -1,12 +1,12 @@
 <?php
 
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ForgotPasswordController;
 use App\Http\Controllers\LoginController;
-use App\Http\Controllers\OneUserProducts;
 use App\Http\Controllers\Products\ProductsController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\User\UserController;
+use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\UserProductsController;
+use App\Http\Controllers\User\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -36,11 +36,16 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
     })->name('status');
 
     // user routes
-    Route:: resource('user', UserController::class);
+    Route::resource('user', UserController::class);
     Route::name('verify')->get('user/verify/{token}', [UserController::class, 'verify']);
     Route::name('resend')->get('user/{user}/resend', [UserController::class, 'resend']);
 
-    Route::resource('profile', ProfileController::class);
+    Route::get('userProfile', [UserController::class, 'userProfile'])->middleware('auth:api');
+    Route::name('code')->post('code', [ForgotPasswordController::class, 'code']);
+    Route::name('reset_password')->post('reset_password', [ResetPasswordController::class, 'reset_password']);
+
+
+    //Route::resource('profile', ProfileController::class);
     Route::post('oauth/token', 'Laravel\Passport\Http\Controllers\AccessTokenController@issueToken');
     Route::post('login', [LoginController::class, 'login']);
     Route::post('logout', [LoginController::class, 'logout']);
@@ -50,13 +55,11 @@ Route::prefix('v1')->name('api.v1.')->group(function () {
 
     //products
 
-    Route::resource('products', ProductsController::class)->only(['index',  'store']);
+    Route::resource('products', ProductsController::class)->only(['index', 'store']);
     //Route::resource('userProducts', OneUserProducts::class);
 
     Route::resource('user.products', UserProductsController::class);
 
-;
-
-
+    ;
 
 });

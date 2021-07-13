@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class LoginController extends Controller
@@ -19,13 +20,9 @@ class LoginController extends Controller
 
         $this->validate($request, $rules);
 
-
         $user = User::where('email', $request->email)->first();
 
         // check if user is verified before log in
-       if(!$user->isVerified()){
-           return response()->json(['unverified' => 'Please verify your account first'], 401);
-       }
 
         if (!$user || !Hash::check($request->password, $user->password)) {
 
@@ -33,10 +30,22 @@ class LoginController extends Controller
 
         }
 
+        if (!$user->isVerified()) {
+            return response()->json(['unverified' => 'Please verify your account first'], 401);
+        }
+
         // return response()->json(['data' => $users], 201);
 
         // return  ( $user->createToken('Auth Token')->accessToken);
 
-        return response()->json(['data' => $user, 'token' => $user->createToken('Auth Token')->accessToken], 200);
+        return response()->json(
+            [
+                'message' => "Success",
+                'token' => $user->createToken('Auth Token')->accessToken,
+                'data' => $user,
+
+            ], 200);
     }
+
+    
 }

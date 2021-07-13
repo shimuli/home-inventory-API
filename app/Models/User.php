@@ -42,6 +42,7 @@ class User extends Authenticatable
         'verified',
         'verification_token',
         'admin',
+        'verify_code'
 
     ];
 
@@ -56,7 +57,7 @@ class User extends Authenticatable
         'verification_token',
         'deleted_at',
         'email_verified_at',
-        'headers'
+        'verify_code'
     ];
 
     /**
@@ -91,5 +92,11 @@ class User extends Authenticatable
     public static function generateVerificationCode(){
         //return Str::random(40);
         return Str::random(40);
+    }
+
+    public static function generateCheckCode(){
+        //return Str::random(40);
+        return rand(1000,9999);
+
     }
 }
