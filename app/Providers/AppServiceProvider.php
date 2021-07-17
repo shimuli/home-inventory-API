@@ -59,12 +59,12 @@ class AppServiceProvider extends ServiceProvider
             }
         });
 
-        User::code(function ($user) {
-            retry(5, function () use ($user) {
-                Mail::to($user)->send(new forgotPasswordMail($user));
-            }, 100);
+        // User::code(function ($user) {
+        //     retry(5, function () use ($user) {
+        //         Mail::to($user)->send(new forgotPasswordMail($user));
+        //     }, 100);
 
-        });
+        // });
 
     }
 }

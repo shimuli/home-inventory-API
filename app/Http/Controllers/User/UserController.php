@@ -69,7 +69,7 @@ class UserController extends ApiController
         //$data['verify_code'] = User::generateCheckCode();
         $users = User::create($data);
 
-        //$this->sendSMS($users); // used to verify phone number
+        $this->sendSMS($users); // used to verify phone number
         return $this->returnOne($users, 201);
 
     }
